@@ -15,8 +15,8 @@ function setEnvValue(key, value) {
 }
 
 
-function updatePackageVersion(packageJson) {
-
+function updateVersion() {
+    const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
     const currentVersion = packageJson.version;
     let [major, minor, patch] = currentVersion.split(".");
     major = parseInt(major);
@@ -47,17 +47,11 @@ function updatePackageVersion(packageJson) {
     if (newVersion !== currentVersion) {
         packageJson.version = newVersion;
         fs.writeFileSync("./package.json", JSON.stringify(packageJson, null, 2));
+        setEnvValue("REACT_APP_VERSION_INFO", newVersion)
         console.log(`Version updated to ${newVersion}`);
     } else {
         console.log("No version update required");
     }
-
-    return newVersion
 }
 
-function versioning(envKey, packageJson) {
-    const newVersion = updatePackageVersion(packageJson)
-    setEnvValue(envKey, newVersion)
-}
-
-module.exports = versioning;
+updateVersion()
